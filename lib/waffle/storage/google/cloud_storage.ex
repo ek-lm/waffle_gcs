@@ -68,15 +68,14 @@ defmodule Waffle.Storage.Google.CloudStorage do
   """
   @spec url(Types.definition(), Types.version(), Types.meta(), Keyword.t()) :: String.t()
   def url(definition, version, meta, opts \\ []) do
-    signer = Util.option(opts, :url_builder, Waffle.Storage.Google.UrlV2)
+    signer = Util.option(opts, :url_builder, Waffle.Storage.Google.UrlV4)
     signer.build(definition, version, meta, opts)
   end
 
   @doc """
-  Constructs a new connection object with scoped authentication. If no scope is
-  provided, the `devstorage.full_control` scope is used as a default.
+  Constructs a new connection object with scoped authentication.
   """
-  @spec conn(String.t()) :: Tesla.Env.client()
+  @spec conn(any()) :: Tesla.Env.client()
   def conn(scope \\ @full_control_scope) do
     token_store = Application.fetch_env!(:waffle, :token_fetcher)
 
