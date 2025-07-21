@@ -49,7 +49,11 @@ defmodule Waffle.Storage.Google.UrlV4 do
     }
 
     opts = [expires: @default_expiry] |> Keyword.merge(options)
-    GcsSignedUrl.generate_v4(oauth_config, CloudStorage.bucket(definition), path, opts)
+
+    {:ok, signed_url} =
+      GcsSignedUrl.generate_v4(oauth_config, CloudStorage.bucket(definition), path, opts)
+
+    signed_url
   end
 
   @spec build_path(Types.definition(), String.t()) :: String.t()
@@ -75,8 +79,9 @@ defmodule Waffle.Storage.Google.UrlV4 do
 
   defp get_token() do
     token_store = Application.fetch_env!(:waffle, :token_fetcher)
+    goth_name = Application.fetch_env!(:waffle, :goth_name)
 
-    token_store.get_token()
+    token_store.get_token(goth_name)
   end
 
   defp get_service_account() do
